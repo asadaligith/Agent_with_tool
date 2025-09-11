@@ -19,6 +19,8 @@ tools = "tools:main"
 main = "tools.main:start"
 chain = "tools.chain:start"
 inputguard = "tools.input_guard:start"
+outputguard = "tools.output_guard:start"
+multiagent = "tools.multiagent:start"
 
 [build-system]
 requires = ["hatchling"]

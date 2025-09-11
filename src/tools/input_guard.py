@@ -1,4 +1,4 @@
-from agents import Agent , Runner , OpenAIChatCompletionsModel , RunConfig , set_tracing_disabled, input_guardrail , RunContextWrapper , GuardrailFunctionOutput
+from agents import Agent , Runner , OpenAIChatCompletionsModel , RunConfig , set_tracing_disabled, input_guardrail , RunContextWrapper , GuardrailFunctionOutput, InputGuardrailTripwireTriggered
 from openai import AsyncOpenAI
 from dotenv import load_dotenv
 from pydantic import BaseModel , Field
@@ -19,7 +19,7 @@ external_client = AsyncOpenAI(
     base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
 )
 
-configioration = RunConfig(OpenAIChatCompletionsModel(
+configuration = RunConfig(OpenAIChatCompletionsModel(
     model= "gemini-2.5-flash",
     openai_client=external_client
 ))
@@ -36,7 +36,7 @@ guard_Agent = Agent(
 
 @input_guardrail
 async def prime_minister_guardrail(ctx :RunContextWrapper, agent :Agent ,input: str )-> GuardrailFunctionOutput:
-    result =await Runner.run(guard_Agent, input=input, run_config=configioration)
+    result =await Runner.run(guard_Agent, input=input, run_config=configuration)
     
     return GuardrailFunctionOutput(
         output_info=result.final_output.output_info,
@@ -53,10 +53,10 @@ query = input("Enter your query: ")
 async def main():
 
     try:
-        result = await Runner.run(agent, input=query, run_config=configioration)
+        result = await Runner.run(agent, input=query, run_config=configuration)
         print("Final Output:", result.final_output)
 
-    except Exception as e:
+    except  InputGuardrailTripwireTriggered as e:
         print("Error:", (e))
 
 def start():
